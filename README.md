@@ -12,6 +12,18 @@ You need to run the file ```record.py``` first to preprocess the data to generat
 
 For example: ```python record.py --dataset=all_data --data=xing --adj=adj_all```
 
+```
+usage: record.py [--dataset ] [--data data_name] [--graph ggnn] [--max_session the length of historical session]
+
+optional arguments:
+--dataset:  use fully data or samples
+--data:     data name
+--graph:    graph neural network 
+--max_session: the length of historical sessions
+--max_length:  the length of current session
+
+```
+
 # Requirement
 * Python3.6
 * Tensorflow1.10
