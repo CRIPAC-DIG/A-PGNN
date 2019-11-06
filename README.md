@@ -21,15 +21,14 @@ optional arguments:
 --graph:    graph neural network 
 --max_session: the length of historical sessions
 --max_length:  the length of current session
-
+--last: the type of test
 ```
 
 # Requirement
-* Python3.6
-* Tensorflow1.10
+* Python3.6.5
+* Tensorflow-gpu1.10.0 
 
 # Citation
-
 
 ```
   @article{wu2019personalizing,
