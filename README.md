@@ -6,7 +6,7 @@ Here are two datasets we used in our paper.
 * Xing 
 * Reddit
 
-# Usage 
+## Usage 
 
 You need to run the file ```record.py``` first to preprocess the data to generate the tf.record formart data for training and test.
 
@@ -24,11 +24,11 @@ optional arguments:
 --last: the type of test
 ```
 
-# Requirement
+## Requirement
 * Python3.6.5
 * Tensorflow-gpu1.10.0 
 
-# Citation
+## Citation
 
 ```
   @article{wu2019personalizing,
