@@ -41,21 +41,21 @@ This code can be given the following command-line arguments:
 
 ```--data:```  the name of data set, we can choose ```xing``` or ```reddit```.
 
-```--user_:'''
+```--user_:```  whether to user user embedding. 
 
-```--max_session:```
+```--max_session:``` the maximum length of historical sessions.
 
-```--max_length:```
+```--max_length:``` the maximum length of current session.
 
-``--adj:``` 
+```--adj:```  if ```adj_all```, use normalized weights for adjacency matrices, else, use binary adjacency matrix. 
 
-```--batchSize:``` 
+```--batchSize:``` batchsize
 
-```--epoch:``` 
+```--epoch:```  epoch
 
-```--lr:``` 
+```--lr:```  learning rate
 
-``` --buffer_size:```
+```--buffer_size:``` 
 
 
 
