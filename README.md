@@ -13,18 +13,20 @@ You need to run the file ```record.py``` first to preprocess the data to generat
 For example:
 ```python record.py --dataset=all_data --data=xing --adj=adj_all --max_session=50```. This will creat ```xing/``` in ```datasets/```.
 
+This code can be given the following command-line arguments:
 
-```
-usage: record.py [--dataset ] [--data data_name] [--graph ggnn] [--max_session the length of historical session]
+```--dataset:``` choose to use fully data or samples, if ```all_data```: use fully data, if ```None``` or ```sample```: use sample data.
 
-optional arguments:
---dataset:  use fully data or samples
---data:     data name
---graph:    graph neural network 
---max_session: the length of historical sessions
---max_length:  the length of current session
---last: the type of test
-```
+```--data:``` the name of data set, we can choose ```xing``` or ```reddit```.
+
+```--graph:```    graph neural network 
+
+```--max_session:``` the length of historical sessions
+
+```--max_length:```  the length of current session
+
+```--last:``` the type of test
+
 
 ## Requirement
 * Python3.6.5
