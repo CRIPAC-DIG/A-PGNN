@@ -11,7 +11,7 @@ Here are two datasets we used in our paper.
 You need to run the file ```record.py``` first to preprocess the data to generate the tf.record formart data for training and test.
 
 For example:
-```python record.py --dataset=all_data --data=xing --adj=adj_all --max_session=50```
+```python record.py --dataset=all_data --data=xing --adj=adj_all --max_session=50```. This will creat ```xing/``` in ```datasets/```.
 
 
 ```
