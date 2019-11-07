@@ -50,13 +50,6 @@ class Model(object):
                                        initializer=tf.random_uniform_initializer(-self.stdv, self.stdv))
             self.h_b = tf.get_variable('h_b', [self.hidden_size], dtype=tf.float32, initializer=tf.zeros_initializer())
             self.control_dim += 2
-        # if mode == 'attention':
-        #     self.a_w = tf.get_variable('a_w', [self.hidden_size, self.hidden_size], dtype=tf.float32,
-        #                                    initializer=tf.random_uniform_initializer(-self.stdv, self.stdv))
-        #     self.a_u = tf.get_variable('a_u', [self.hidden_size, self.hidden_size], dtype=tf.float32,
-        #                                    initializer=tf.random_uniform_initializer(-self.stdv, self.stdv))
-        #     self.a_v = tf.get_variable('a_v', [self.hidden_size, self.hidden_size], dtype=tf.float32,
-        #                                    initializer=tf.random_uniform_initializer(-self.stdv, self.stdv))
 
     def session_embed(self, embed, session_alias, session_mask, session_len, user, train=True):
         session = tf.stack([tf.nn.embedding_lookup(embed[i], session_alias[i]) for i in range(self.batch_size)], 0)
@@ -78,11 +71,6 @@ class Model(object):
                                     tf.stack([tf.range(self.batch_size, dtype=tf.int64), session_len - 1], axis=1))
         session_ma = stamp_attention(session_seq, session_last, session_embed_mask, self.h_w1, self.h_w2, self.h_b,
                                      self.h_v, self.hidden_size, self.batch_size )
-
-        #----------------user_attention--------------------
-        # user_embed = tf.nn.embedding_lookup(self.user_embedding, user)
-        # session_ma = user_attention(session_seq, user_embed, session_embed_mask, self.h_w1, self.h_b, self.hidden_size,
-        #                             self.batch_size)
         if self.mode == 'transformer' or self.mode == 'attention':
             return tf.reshape(session_seq, [self.batch_size, -1, self.hidden_size]), session_ma
         else:
@@ -92,7 +80,6 @@ class Model(object):
                 session_alias, session_len, session_mask, tar, user, train=True):
         if self.graph == 'ggnn':
             re_embedding = self.ggnn(items, user, adj_in, adj_out, is_training=train)
-            #re_embedding = self.no_graph(items)
         elif self.graph == 'no_graph':
             re_embedding = self.no_graph(items)
         b = self.embedding[1:]
@@ -102,19 +89,9 @@ class Model(object):
                     session_embed_mask = tf.sequence_mask(session_len, maxlen=self.group_max, dtype=tf.float32)
                     encoder_out, session_h = self.session_embed(
                         re_embedding, session_alias, session_mask, session_len, user, train=train)
-
                     decoder_input = tf.stack(
                         [tf.nn.embedding_lookup(re_embedding[i], seq_alias[i]) for i in range(self.batch_size)], 0)
                     dec_mask = tf.sequence_mask(seq_mask, maxlen=seq_alias.shape[-1].value, dtype=tf.float32)
-                    # decoder_out = decoder(tf.reshape(decoder_input, [self.batch_size, -1, self.hidden_size]),
-                    #                       dec_mask, self.seq_max, encoder_out, session_embed_mask, self.hidden_size,
-                    #                       train=train)
-                    # decoder_out = multihead_attention(tf.reshape(decoder_input, [self.batch_size, -1, self.hidden_size]),
-                    #                                   dec_mask,
-                    #                                   tf.reshape(encoder_out, [self.batch_size, -1, self.hidden_size]),
-                    #                                   session_embed_mask,
-                    #                                   num_units=self.hidden_size, is_training=train)
-
                     decoder_out = mul_attention(
                         tf.reshape(decoder_input, [self.batch_size, -1, self.hidden_size]),
                         dec_mask,
@@ -128,7 +105,6 @@ class Model(object):
                                          self.hidden_size, self.batch_size)
                     if self.history_:
                         ma = tf.concat([ma, session_h], -1)
-
             elif self.mode == 'attention':
                 with tf.variable_scope('attention'):
                     session_embed_mask = tf.sequence_mask(session_len, maxlen=self.group_max, dtype=tf.float32)
@@ -137,9 +113,6 @@ class Model(object):
                     decoder_input = tf.stack(
                         [tf.nn.embedding_lookup(re_embedding[i], seq_alias[i]) for i in range(self.batch_size)], 0)
                     dec_mask = tf.sequence_mask(seq_mask, maxlen=seq_alias.shape[-1].value, dtype=tf.float32)
-                    # decoder_out = decoder(tf.reshape(decoder_input, [self.batch_size, -1, self.hidden_size]),
-                    #                       dec_mask, self.seq_max, encoder_out, session_embed_mask, self.hidden_size,
-                    #                       train=train)
                     decoder_out = trans_attention(tf.reshape(encoder_out, [self.batch_size, -1, self.hidden_size]),
                                                   tf.reshape(decoder_input, [self.batch_size, -1, self.hidden_size]),
                                                   session_embed_mask, dec_mask, self.hidden_size)
@@ -157,7 +130,6 @@ class Model(object):
                     seq_mask_ = tf.sequence_mask(seq_mask, maxlen=seq_alias.shape[-1].value, dtype=tf.float32)
                     seq_h = tf.stack(
                         [tf.nn.embedding_lookup(re_embedding[i], seq_alias[i]) for i in range(self.batch_size)], axis=0)
-
                     #加入self attention
                     if self.decoder_attention:
                         seq_h = multihead_attention(tf.reshape(seq_h, [self.batch_size, -1, self.hidden_size]), seq_mask_,
@@ -238,42 +210,7 @@ class Graph(Model):
                 self.u_out = tf.get_variable('u_out', [user_size, self.hidden_size], dtype=tf.float32,
                                              initializer=tf.random_uniform_initializer(-self.stdv, self.stdv))
 
-        # with tf.variable_scope('model_loss', reuse=None):
-        #     if self.graph == 'ggnn':
-        #         self.loss_train, _ = self.forward(self.ggnn())
-        #     elif self.graph == 'gcn':
-        #         self.loss_train, _ = self.forward(self.gcn())
-        #     elif self.graph == 'no_graph':
-        #         self.loss_train, _ = self.forward(self.no_graph())
-        # with tf.variable_scope('model_loss', reuse=True):
-        #     if self.graph == 'ggnn':
-        #         self.loss_test, self.score_test = self.forward(self.ggnn(), train=False)
-        #     elif self.graph == 'gcn':
-        #         self.loss_test, self.score_test = self.forward(self.gcn(), train=False)
-        #     elif self.graph == 'no_graph':
-        #         self.loss_test, self.score_test = self.forward(self.no_graph(), train=False)
-        #     self.index = tf.nn.top_k(self.score_test, 5)
-        #
-        # if self.decay:
-        #     self.global_step = tf.Variable(0)
-        #     self.learning_rate = tf.train.exponential_decay(lr, global_step=self.global_step, decay_steps=self.decay,
-        #                                                     decay_rate=0.96, staircase=True)
-        #     self.opt = tf.train.AdamOptimizer(self.learning_rate).minimize(self.loss_train, global_step=self.global_step)
-        # else:
-        #     self.opt = tf.train.AdamOptimizer(lr).minimize(self.loss_train)
-
-        # gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.9)
-        # config = tf.ConfigProto(gpu_options=gpu_options)
-        # config.gpu_options.allow_growth = True
-        # self.sess = tf.Session(config=config)
-        # self.writer = tf.summary.FileWriter("logs/", self.sess.graph)
-        # [variable_summaries(vars, vars.name[:-2]) for vars in self.vars]
-        # self.merged = tf.summary.merge_all()
-        # self.sess.run(tf.global_variables_initializer())
-
     def ggnn(self, items, user, adj_in, adj_out, is_training=True):
-        # fin_state = tf.concat([tf.nn.embedding_lookup(self.embedding, self.items),
-        #                        tf.nn.embedding_lookup(self.user_embedding, self.user)], axis=-1)
         fin_state = tf.nn.embedding_lookup(self.embedding, items)
         u_state = tf.nn.embedding_lookup(self.user_embedding, user)
         cell = tf.nn.rnn_cell.GRUCell(self.hidden_size)
@@ -301,35 +238,6 @@ class Graph(Model):
                                       initial_state=tf.reshape(fin_state, [-1, self.hidden_size]))
                 #fin_state = tf.layers.dropout(fin_state, rate= self.ggnn_drop, training=tf.convert_to_tensor(is_training))
         return tf.reshape(fin_state, [self.batch_size, -1, self.hidden_size])
-
-    def gcn(self):
-        fin_state = tf.nn.embedding_lookup(self.embedding, self.items)
-        u_state = tf.nn.embedding_lookup(self.user_embedding, self.user)
-        with tf.variable_scope('GCN'):
-            for i in range(self.step):
-                fin_state = tf.reshape(fin_state, [-1, self.hidden_size])
-                if self.user_:
-                    fin_state_in = tf.reshape(tf.matmul(fin_state, self.W_in) + self.b_in,
-                                              [self.batch_size, -1, self.hidden_size]) + \
-                                   tf.expand_dims(tf.matmul(u_state, self.u_in), 1)
-                    fin_state_out = tf.reshape(tf.matmul(fin_state, self.W_out) + self.b_out,
-                                               [self.batch_size, -1, self.hidden_size]) + \
-                                    tf.expand_dims(tf.matmul(u_state, self.u_out), 1)
-                else:
-                    fin_state_in = tf.reshape(tf.matmul(fin_state, self.W_in) + self.b_in,
-                                              [self.batch_size, -1, self.hidden_size])
-                    fin_state_out = tf.reshape(tf.matmul(fin_state, self.W_out) + self.b_out,
-                                               [self.batch_size, -1, self.hidden_size])
-                elems1 = tf.sparse_split(sp_input=self.adj_in, num_split=self.batch_size, axis=0)
-                elems2 = tf.sparse_split(sp_input=self.adj_out, num_split=self.batch_size, axis=0)
-                av1 = tf.stack(
-                    [tf.sparse_tensor_dense_matmul(tf.sparse_reshape(elems1[i], [self.shape, self.shape]),
-                                                   fin_state_in[i]) for i in range(self.batch_size)], axis=0)
-                av2 = tf.stack(
-                    [tf.sparse_tensor_dense_matmul(tf.sparse_reshape(elems2[i], [self.shape, self.shape]),
-                                                   fin_state_out[i]) for i in range(self.batch_size)], axis=0)
-                fin_state = tf.layers.dense(tf.concat([tf.nn.relu(av1), tf.nn.relu(av2)], axis=-1), self.hidden_size)
-        return fin_state
 
     def no_graph(self, items):
         fin_state = tf.nn.embedding_lookup(self.embedding, items)
@@ -381,9 +289,6 @@ def user_attention(seq, user, seq_mask, w, b, dim, batchsize):
 
 # reference paper------neural machine translation by jointly learning to align and translate-----------
 def trans_attention(sess, seq, session_mask, seq_mask, dim):
-    #sess_ = tf.reshape(tf.matmul(tf.reshape(sess, [-1, dim]), W), [batchsize, -1, dim])
-    #seq_ = tf.reshape(tf.matmul(tf.reshape(seq, [-1, dim]), U), [batchsize, -1, dim])
-    #coef = tf.squeeze(tf.nn.tanh(tf.matmul((tf.expand_dims(seq_,2)+tf.expand_dims(sess_,1))), v))
     sess_ = tf.layers.dense(sess, dim, activation=None, use_bias=False, name='sess_')
     seq_ = tf.layers.dense(seq, dim, activation=None, use_bias=False, name='seq_')
     #coef = tf.squeeze(tf.layers.dense((tf.expand_dims(seq_, 2) + tf.expand_dims(sess_, 1)), 1, activation=tf.nn.tanh, use_bias=False, name='coef'))
@@ -395,10 +300,8 @@ def trans_attention(sess, seq, session_mask, seq_mask, dim):
     outputs = tf.where(tf.equal(sess_masks, 0), paddings, coef)
     outputs = tf.nn.softmax(outputs)
     seq_masks = tf.tile(tf.expand_dims(seq_mask, -1), [1, 1, tf.shape(sess)[1]])
-    #outputs = tf.matmul(outputs*seq_masks, sess_) + seq
-    #outputs = tf.matmul(outputs * seq_masks, sess) + seq
     outputs = tf.layers.dense(tf.concat([tf.matmul(outputs*seq_masks, sess), seq], axis=-1), dim, activation=None, use_bias=False,name='concat')
-    #outputs = normalize(outputs)
+    outputs = normalize(outputs)
     return outputs
 
 
@@ -418,7 +321,7 @@ def mul_attention(queries, query_masks, keys, key_masks, dim):
         outputs *= query_masks
         #outputs = tf.layers.dense(tf.concat([tf.matmul(outputs, V), queries],axis=-1), dim, activation=None, use_bias=False, name='concat')
         outputs = tf.matmul(outputs, V)+queries
-        outputs = normalize(outputs)
+       # outputs = normalize(outputs)
     return outputs
 
 
@@ -496,7 +399,7 @@ def run_epoch(session, train_loss, train_opt, valid_loss, valid_index, valid_ite
             step += 1
             if step%5000 == 0:
                 session.run(valid_iterator.initializer)
-                val_loss, hit5, hit10, hit20, mrr5, mrr10, mrr20, _ , _= eval_epoch(session, valid_index, valid_loss, valid_data, max_length=max_length, max_session=max_session)
+                val_loss, hit5, hit10, hit20, mrr5, mrr10, mrr20, _,_ = eval_epoch(session, valid_index, valid_loss, valid_data, max_length=max_length, max_session=max_session)
                 print('---After %d steps' % (step),
                       'train_loss:%.4f\tvalid_loss:%.4f\tRecall@5:%.4f\tRecall@10:%.4f\tRecall@20:%.4f\tMMR@5:%.4f'
                       '\tMrr@10:%.4f\tMMR@20:%.4f' %(loss_, val_loss, hit5, hit10, hit20, mrr5, mrr10, mrr20))
@@ -508,9 +411,9 @@ def run_epoch(session, train_loss, train_opt, valid_loss, valid_index, valid_ite
 def eval_epoch(session, test_index, test_loss, test_data, max_length=20, max_session=150):
     all_loss, hit5, mrr5, hit10, mrr10, hit20, mrr20 = [], [], [], [], [], [], []
     length_index = np.zeros((max_length-1, 8))
-    length_index[:, 6] = length_index[:,6] + 1
     history_index = np.zeros((max_session, 8))
-    history_index[:, 6] = history_index[:, 6] + 1
+    length_index[:,6] = length_index[:,6] + 1
+    history_index[:,6] = history_index[:,6] + 1
     while True:
         try:
             index, test_loss_, tar, seq_length, sess_length = session.run([test_index, test_loss, test_data['tar'], test_data['seq_mask'], test_data['session_len']])
@@ -554,7 +457,6 @@ def eval_epoch(session, test_index, test_loss, test_data, max_length=20, max_ses
         history_index[:, i] = history_index[:, i] / history_index[:, 6]
     length_index[:, -1] = np.arange(1, max_length)
     history_index[:, -1] = np.arange(1, max_session+1)
-
     # len_index = pd.DataFrame(length_index,
     #                          columns = ['RecaLL5', 'RecaLL10', 'RecaLL20', 'Mrr5', 'Mrr10', 'Mrr20', 'number'],
     #                          index=range(1, max_length))
