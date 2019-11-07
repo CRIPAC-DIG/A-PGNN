@@ -50,21 +50,13 @@ This code can be given the following command-line arguments:
 ```--adj:```  if ```adj_all```, use normalized weights for adjacency matrices, else, use binary adjacency matrix. 
 
 ```--batchSize:``` batchsize
-
 ```--epoch:```  epoch
-
 ```--lr:```  learning rate
-
 ```--buffer_size:``` 
 
-
-
-
-
-
 ## Requirement
-* Python3.6.5
-* Tensorflow-gpu1.10.0 
+* Python 3.6.5
+* Tensorflow-gpu 1.10.0 
 
 ## Citation
 
