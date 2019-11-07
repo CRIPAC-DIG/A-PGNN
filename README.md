@@ -18,15 +18,10 @@ For example:
 This code can be given the following command-line arguments:
 
 ```--dataset:``` choose to use fully data or samples, if ```all_data```: use fully data, if ```None``` or ```sample```: use sample data.
-
 ```--data:```  the name of data set, we can choose ```xing``` or ```reddit```.
-
 ```--graph:```  graph neural network, default set is ```ggnn```.
-
 ```--max_session:```  the maximum length of historical sessions.
-
 ```--max_length:```  the maximum length of current session.
-
 ```--last:```  if ```True```, the last one for testing, else, the next 20% for testing.
 
 ### Training and Testing 
@@ -38,21 +33,15 @@ For example: ```python train_last.py --data=xing --mode=transformer --user_ --ad
 This code can be given the following command-line arguments:
 
 ```--dataset:``` choose to use fully data or samples, if ```all_data```: use fully data, if ```None``` or ```sample```: use sample data.
-
 ```--data:```  the name of data set, we can choose ```xing``` or ```reddit```.
-
 ```--user_:```  whether to user user embedding. 
-
 ```--max_session:``` the maximum length of historical sessions.
-
 ```--max_length:``` the maximum length of current session.
-
 ```--adj:```  if ```adj_all```, use normalized weights for adjacency matrices, else, use binary adjacency matrix. 
-
 ```--batchSize:``` batchsize
 ```--epoch:```  epoch
 ```--lr:```  learning rate
-```--buffer_size:``` 
+```--buffer_size:```  the maximum number of elements that will be added to the buffer. For details, see the use of ```tf.record```.
 
 ## Requirement
 * Python 3.6.5
