@@ -8,6 +8,8 @@ Here are two datasets we used in our paper.
 
 ## Usage 
 
+### Generate data
+
 You need to run the file ```record.py``` first to preprocess the data to generate the tf.record formart data for training and test.
 
 For example:
@@ -26,6 +28,15 @@ This code can be given the following command-line arguments:
 ```--max_length:```  the maximum length of current session.
 
 ```--last:```  if ```True```, the last one for testing, else, the next 20% for testing.
+
+### Training and Testing 
+
+Then you can run the file ```train_last.py``` to train the model and test.
+
+For example: ```python train_last.py --data=xing --mode=transformer --user_ --adj=all_adj --dataset=all_data --hiddenSize=100```
+
+
+
 
 
 ## Requirement
