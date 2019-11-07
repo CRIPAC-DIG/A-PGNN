@@ -35,6 +35,29 @@ Then you can run the file ```train_last.py``` to train the model and test.
 
 For example: ```python train_last.py --data=xing --mode=transformer --user_ --adj=all_adj --dataset=all_data --hiddenSize=100```
 
+This code can be given the following command-line arguments:
+
+```--dataset:``` choose to use fully data or samples, if ```all_data```: use fully data, if ```None``` or ```sample```: use sample data.
+
+```--data:```  the name of data set, we can choose ```xing``` or ```reddit```.
+
+```--user_:'''
+
+```--max_session:```
+
+```--max_length:```
+
+``--adj:``` 
+
+```--batchSize:``` 
+
+```--epoch:``` 
+
+```--lr:``` 
+
+``` --buffer_size:```
+
+
 
 
 
