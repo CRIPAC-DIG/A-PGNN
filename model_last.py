@@ -13,7 +13,7 @@ from transformer import encoder, decoder, multihead_attention,normalize
 
 
 class Model(object):
-    def __init__(self, hidden_size=100, user_size=100, batch_size=100, seq_max=20, group_max=100, mode='usual_attention', decoder_attention=True,
+    def __init__(self, hidden_size=100, user_size=100, batch_size=100, seq_max=20, group_max=100, mode='usual_attention', data=None, decoder_attention=True,
                  encoder_attention=True, user_=True, behaviour_=False,
                  history_=True, sparse=True):
         self.hidden_size = hidden_size
@@ -22,6 +22,7 @@ class Model(object):
         self.seq_max = seq_max
         self.group_max = group_max
         self.mode = mode
+        self.data = data
         self.decoder_attention = decoder_attention
         self.encoder_attention = encoder_attention
         self.history_ = history_
@@ -97,7 +98,7 @@ class Model(object):
                         dec_mask,
                         tf.reshape(encoder_out, [self.batch_size, -1, self.hidden_size]),
                         session_embed_mask,
-                        self.hidden_size)
+                        self.hidden_size, data=self.data)
                     #stamp
                     decoder_last = tf.gather_nd(decoder_out,
                                                 tf.stack([tf.range(self.batch_size, dtype=tf.int64), seq_mask-1], axis=1))
@@ -305,7 +306,7 @@ def trans_attention(sess, seq, session_mask, seq_mask, dim):
     return outputs
 
 
-def mul_attention(queries, query_masks, keys, key_masks, dim):
+def mul_attention(queries, query_masks, keys, key_masks, dim, data='xing'):
     with tf.variable_scope('multihead_attention'):
         Q = tf.layers.dense(queries, dim, activation=tf.nn.relu, use_bias=False, name='q')  # (N, T_q, C)
         K = tf.layers.dense(keys, dim, activation=tf.nn.relu, use_bias=False, name='k')  # (N, T_k, C)
@@ -321,8 +322,11 @@ def mul_attention(queries, query_masks, keys, key_masks, dim):
         outputs *= query_masks
         #outputs = tf.layers.dense(tf.concat([tf.matmul(outputs, V), queries],axis=-1), dim, activation=None, use_bias=False, name='concat')
         outputs = tf.matmul(outputs, V)+queries
-       # outputs = normalize(outputs)
-    return outputs
+        if data == 'xing':
+            outputs = normalize(outputs)
+            return outputs
+        else:
+            return outputs
 
 
 def parse_function_(max_session):
