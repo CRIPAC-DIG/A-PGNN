@@ -4,7 +4,7 @@ The code and dataset for our paper: Personalizing Graph Neural Networks with Att
 Here are two datasets we used in our paper.
 
 * Xing http://2016.recsyschallenge.com/
-* Reddit https://www.kaggle.com/colemaclean/ subreddit-interactions
+* Reddit https://www.kaggle.com/colemaclean/subreddit-interactions
 
 ## Usage 
 
