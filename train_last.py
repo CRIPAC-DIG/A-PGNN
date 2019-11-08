@@ -111,8 +111,8 @@ model = Graph(hidden_size=opt.hiddenSize, user_size=opt.userSize, batch_size=opt
               group_max=opt.max_session,
               n_item=n_item, n_user=n_user, lr=opt.lr,
               l2=opt.l2, step=opt.step, decay=opt.decay, ggnn_drop=opt.ggnn_drop, graph=opt.graph, mode=opt.mode,
-              decoder_attention=opt.decoder_attention, encoder_attention=opt.encoder_attention,
-              behaviour_=opt.behaviour_,  pool=opt.pool)
+              data=opt.data, decoder_attention=opt.decoder_attention, encoder_attention=opt.encoder_attention,
+              behaviour_=opt.behaviour_, pool=opt.pool)
 
 train_data = train_iterator.get_next()
 test_data = test_iterator.get_next()
@@ -158,11 +158,9 @@ with tf.Session() as sess:
         sess.run([train_iterator.initializer, test_iterator.initializer])
         print('epoch: ', epoch, '====================================================')
         print('start training: ', datetime.datetime.now())
-        step, mean_train_loss = run_epoch(sess, train_loss, train_opt, valid_loss, valid_index, valid_iterator,
-                                          valid_data, step, max_length=opt.max_length, max_session=opt.max_session)
+        step, mean_train_loss = run_epoch(sess, train_loss, train_opt, valid_loss, valid_index, valid_iterator, valid_data, step, max_length=opt.max_length, max_session=opt.max_session)
         print('start predicting: ', datetime.datetime.now())
-        mean_test_loss, hit5, hit10, hit20, mrr5, mrr10, mrr20, len_index, history_index\
-            = eval_epoch(sess, test_index, test_loss, test_data, max_length=opt.max_length, max_session=opt.max_session)
+        mean_test_loss, hit5, hit10, hit20, mrr5, mrr10, mrr20, len_index, history_index = eval_epoch(sess, test_index, test_loss, test_data, max_length=opt.max_length, max_session=opt.max_session)
         #----select recall or hit-----------------
         if hit5>=best_result[0]:
             best_result[0] = hit5
