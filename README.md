@@ -1,5 +1,5 @@
 # A-PGNN
-The code and dataset for our paper: Personalizing Graph Neural Networks with Attention Mechanism for Session-based Recommendation (https://arxiv.org/abs/1910.08887). We have implemented our methods in Tensorflow.
+The code and dataset for our paper: Personalizing Graph Neural Networks with Attention Mechanism for Session-based Recommendation (https://arxiv.org/abs/1910.08887), which has been submitted to TKDE. We have implemented our methods in Tensorflow.
 
 Here are two datasets we used in our paper.
 
