@@ -61,7 +61,7 @@ This code can be given the following command-line arguments:
 * Python 3.6.5
 * Tensorflow-gpu 1.10.0 
 
-## Citation
+## Cite
 
 ```
   @article{wu2019personalizing,
