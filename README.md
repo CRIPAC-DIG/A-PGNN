@@ -6,6 +6,8 @@ Here are two datasets we used in our paper.
 * Xing http://2016.recsyschallenge.com/
 * Reddit https://www.kaggle.com/colemaclean/subreddit-interactions
 
+The processed data can be downloaded: https://www.dropbox.com/sh/hwx2347ir1worag/AABJK6IBXHNBlbvrvKqw94YKa?dl=0
+
 ## Usage 
 
 ### Generate data
