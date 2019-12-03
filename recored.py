@@ -14,7 +14,7 @@ import os
 from scipy import sparse as sp
 import datetime
 import tensorflow as tf
-from joblib import Parallel,delayed
+from joblib import Parallel, delayed
 import multiprocessing
 from model_last import parse_function_
 
@@ -25,7 +25,7 @@ parser.add_argument('--dataset', default='sample', help='dataset name: all_data/
 parser.add_argument('--user', type=int, default=50, help='the number of need user')
 parser.add_argument('--graph', default='ggnn')
 parser.add_argument('--adj', default='adj', help='adj_all')
-parser.add_argument('--max_session',type=int, default=100)
+parser.add_argument('--max_session', type=int, default=100)
 parser.add_argument('--max_length', type=int, default=20)
 parser.add_argument('--last', action='store_true', help='user_embedding')
 parser.add_argument('--bpr', action='store_true', help='cross entropy/bpr')
@@ -85,13 +85,9 @@ def generate_tfrecord(all_data, train_path, graph='ggnn', max_session=50, max_le
                 split_point = int(len(all_sess)*(1-test_size))
             user_id = data['user'].unique()[0]
             count = 1
-            # writer = tf.python_io.TFRecordWriter(
-            #          train_path+'/'+'train_user_'+str(np.unique(data['user_id'])[0])+'.tfrecord')
             if len(all_sess) == 1:
                 return None
             if train:
-                # writer = tf.python_io.TFRecordWriter(
-                #     train_path+'/'+'train_user_'+str(np.unique(data['user_id'])[0])+'.tfrecord')
                 orgin_path = orgin_path+'train_'
                 start = 1
                 end = split_point
@@ -120,8 +116,6 @@ def generate_tfrecord(all_data, train_path, graph='ggnn', max_session=50, max_le
                     #生成每个session的别名和mask值，并且padding
                     sub_sess_pad = [sess + [0]*(max_length-len(sess)) for sess in sub_sess]+[[0]*max_length]*(max_session-len(sub_sess))
                     sub_sess_alias = np.array([[np.where(node==s)[0][0] for s in sess_pad] for sess_pad in sub_sess_pad])
-                    #session_pad.append(sub_sess_pad)
-                    #session_alias.append(sp.coo_matrix(sub_sess_alias, dtype=np.int32))
                     features['session_alias'] = _int64_feature(sub_sess_alias.reshape(-1))
                     features['session_alias_shape'] = _int64_feature(sub_sess_alias.shape)
                     #session mask值
@@ -163,7 +157,7 @@ def generate_tfrecord(all_data, train_path, graph='ggnn', max_session=50, max_le
                     u_sum_out = np.sum(u_A, 1)
                     u_sum_out[np.where(u_sum_out == 0)] = 1
                     u_A_out = np.divide(u_A.transpose(), u_sum_out)
-                    #------------尝试稀疏方式------------
+                    #------------稀疏方式------------
                     u_A_in = sp.coo_matrix(u_A_in)
                     u_A_out = sp.coo_matrix(u_A_out)
                     features['A_in_row'] = _int64_feature(u_A_in.row)
@@ -174,17 +168,6 @@ def generate_tfrecord(all_data, train_path, graph='ggnn', max_session=50, max_le
                     features['A_out'] = _float_feature(u_A_out.data)
                     features['A_in_shape'] = _int64_feature(u_A_in.shape)
                     features['A_out_shape'] = _int64_feature(u_A_out.shape)
-
-                    #----------正常方式---------------------------
-                    # features['A_in'] = _float_feature(u_A_in.reshape(-1))
-                    # features['A_in_shape'] =_int64_feature(u_A_in.shape)
-                    # features['A_out'] = _float_feature(u_A_out.reshape(-1))
-                    # features['A_out_shape'] = _int64_feature(u_A_out.shape)
-                    #----------------尝试字符串方式------------------------------
-                    # u_A_in = u_A_in.tostring()
-                    # features['A_in'] = _bytes_feature([u_A_in])
-                    # u_A_out = u_A_out.tostring()
-                    # features['A_out'] = _bytes_feature([u_A_out])
                     #--------------------------------------
                     tf_features = tf.train.Features(feature=features)
                     tf_example = tf.train.Example(features=tf_features)
@@ -197,15 +180,11 @@ def generate_tfrecord(all_data, train_path, graph='ggnn', max_session=50, max_le
             writer.close()
         return select
 
-    # all_data.groupby('user_id').apply(select_data())
-    # all_data.groupby('user_id').apply(select_data(False))
     apply_parallel(all_data.groupby('user'), select_data())
     apply_parallel(all_data.groupby('user'), select_data(False))
 
 
 if __name__ == '__main__':
-    # data = pickle.load(open(lastfm_path, 'rb'))
-    # generate(data)
     if opt.data == 'last':
         all_data=pd.read_csv(r'./datasets/last.csv')
     elif opt.data == 'xing':
@@ -219,36 +198,3 @@ if __name__ == '__main__':
     else:
         generate_tfrecord(all_data, train_path, graph=opt.graph, max_session=opt.max_session, max_length=opt.max_length, adj=opt.adj, last=opt.last)
     print('end:', datetime.datetime.now())
-    # filenames = tf.train.match_filenames_once(train_path+'/'+'train_user_'+'*'+'.tfrecord')
-    # dataset = tf.data.TFRecordDataset(filenames)
-    # new_dataset = dataset.map(parse_function_(opt.max_session))
-    # shuffle_dataset = new_dataset.shuffle(buffer_size=10000)
-    # batch_padding_dataset = shuffle_dataset.padded_batch(40, padded_shapes={
-    #                                                         'A_in': [None, None],
-    #                                                         'A_out': [None, None],
-    #                                                         'session_alias_shape': [None],
-    #                                                         'session_alias': [None, None],
-    #                                                         'seq_mask': [],
-    #                                                         'session_len':[],
-    #                                                         'tar': [],
-    #                                                         'user': [],
-    #                                                         'session_mask':[None],
-    #                                                         'seq_alias': [None],
-    #                                                         'num_node': [],
-    #                                                         'all_node': [None],
-    #                                                         'A_in_shape': [None],
-    #                                                         'A_out_shape': [None],
-    #                                                         'A_in_row': [None],
-    #                                                         'A_in_col': [None],
-    #                                                         'A_out_row': [None],
-    #                                                         'A_out_col': [None]},drop_remainder=True)
-    # iterator = batch_padding_dataset.make_initializable_iterator()
-    # next_element = iterator.get_next()
-    # with tf.Session() as sess:
-    #     tf.local_variables_initializer().run()
-    #     sess.run(iterator.initializer)
-    #     while True:
-    #         try:
-    #             a = sess.run(next_element)
-    #         except tf.errors.OutOfRangeError:
-    #             break
