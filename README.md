@@ -57,7 +57,7 @@ This code can be given the following command-line arguments:
 
 ```--lr:```  learning rate.
 
-```--buffer_size:```  the maximum number of elements that will be added to the buffer. For details, see the use of ```tf.record```.
+```--buffer_size:```  the maximum number of elements that will be added to the buffer. For details, see the use of ```tf.record```, for Xing, we set 200000, Reddit is 100000.
 
 ## Requirement
 * Python 3.6.5
