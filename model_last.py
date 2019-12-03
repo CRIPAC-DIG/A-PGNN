@@ -170,9 +170,9 @@ class Model(object):
 class Graph(Model):
     def __init__(self, hidden_size, user_size=10, batch_size=100, seq_max=20, group_max=50, n_item=None, n_user=None,
                  n_behaviour=None, lr=None, l2=None, step=1, decay=None, spare=True, ggnn_drop=0,
-                 graph='ggnn', mode='usual_attention',
+                 graph='ggnn', mode='usual_attention', data=None,
                  decoder_attention=True, encoder_attention=True, user_=True, behaviour_=False, history_=True, pool='max'):
-        super(Graph, self).__init__(hidden_size, user_size, batch_size, seq_max, group_max, mode,
+        super(Graph, self).__init__(hidden_size, user_size, batch_size, seq_max, group_max, mode, data,
                                     decoder_attention, encoder_attention, user_,
                                     behaviour_, history_, spare)
         self.item_embedding = tf.get_variable(shape=[n_item-1, hidden_size], name='embedding', dtype=tf.float32,
