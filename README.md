@@ -43,7 +43,7 @@ This code can be given the following command-line arguments:
 
 ```--data:```  the name of data set, we can choose ```xing``` or ```reddit```.
 
-```--user_:```  whether to user user embedding. 
+```--user_:```  whether to use user embedding. 
 
 ```--max_session:``` the maximum length of historical sessions.
 
