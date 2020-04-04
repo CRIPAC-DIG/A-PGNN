@@ -35,7 +35,7 @@ This code can be given the following command-line arguments:
 
 Then you can run the file ```train_last.py``` to train the model and test.
 
-For example: ```python train_last.py --data=xing --mode=transformer --user_ --adj=all_adj --dataset=all_data --hiddenSize=100```
+For example: ```python train_last.py --data=xing --mode=transformer --user_ --adj=adj_all --dataset=all_data --hiddenSize=100```
 
 This code can be given the following command-line arguments:
 
