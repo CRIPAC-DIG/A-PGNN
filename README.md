@@ -1,5 +1,5 @@
 # A-PGNN
-The code and dataset for our paper: Personalized Graph Neural Networks with Attention Mechanism for Session-Aware Recommendation (https://arxiv.org/abs/1910.08887), which has been submitted to TKDE. We have implemented our methods in Tensorflow.
+The code and dataset for our TKDE paper: Personalized Graph Neural Networks with Attention Mechanism for Session-Aware Recommendation (https://ieeexplore.ieee.org/abstract/document/9226110). We have implemented our methods in Tensorflow.
 
 Here are two datasets we used in our paper.
 
@@ -66,11 +66,12 @@ This code can be given the following command-line arguments:
 ## Cite
 
 ```
-  @article{wu2019personalizing,
-  title={Personalizing Graph Neural Networks with Attention Mechanism for Session-based Recommendation},
-  author={Wu, Shu and Zhang, Mengqi and Jiang, Xin and Ke, Xu and Wang, Liang},
-  journal={arXiv preprint arXiv:1910.08887},
-  year={2019}
+@article{zhang2020personalized,
+  title={Personalized Graph Neural Networks with Attention Mechanism for Session-Aware Recommendation},
+  author={Zhang, Mengqi and Wu, Shu and Gao, Meng and Jiang, Xin and Xu, Ke and Wang, Liang},
+  journal={IEEE Transactions on Knowledge and Data Engineering},
+  year={2020},
+  publisher={IEEE}
 }
 ```
 
