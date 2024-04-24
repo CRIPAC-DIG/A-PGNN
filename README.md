@@ -1,14 +1,18 @@
 # A-PGNN
-The code and dataset for our TKDE paper: Personalized Graph Neural Networks with Attention Mechanism for Session-Aware Recommendation (https://ieeexplore.ieee.org/abstract/document/9226110). We have implemented our methods in Tensorflow.
 
+<img src="a_pgnn.png" alt="model" style="zoom: 50%;" />
+
+This is the code for the TKDE Paper: [Personalized Graph Neural Networks with Attention Mechanism for Session-Aware Recommendation](https://ieeexplore.ieee.org/abstract/document/9226110).
+
+## Usage
+
+### Preparation data and code
 Here are two datasets we used in our paper.
 
 * Xing http://2016.recsyschallenge.com/
 * Reddit https://www.kaggle.com/colemaclean/subreddit-interactions
 
 The processed data can be downloaded: https://www.dropbox.com/sh/hwx2347ir1worag/AABJK6IBXHNBlbvrvKqw94YKa?dl=0
-
-## Usage 
 
 ### Generate data
 
@@ -59,11 +63,15 @@ This code can be given the following command-line arguments:
 
 ```--buffer_size:```  the maximum number of elements that will be added to the buffer. For details, see the use of ```tf.record```, for Xing, we set 200000, Reddit is 100000.
 
-## Requirement
-* Python 3.6.5
-* Tensorflow-gpu 1.10.0 
 
-## Cite
+## Requirements
+
+- Python 3.6.5
+- Tensorflow-gpu 1.10.0 
+
+## Citation
+
+Please cite our paper if you use the code:
 
 ```
 @article{zhang2020personalized,
@@ -74,7 +82,3 @@ This code can be given the following command-line arguments:
   publisher={IEEE}
 }
 ```
-
-
-
-
